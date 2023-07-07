@@ -19,7 +19,7 @@ class Parser
     {
         $name = static::name($expression);
 
-        if (preg_match_all('/\{\s*(.*)\s*\}/', $expression, $matches) && count($matches[1])) {
+        if (preg_match_all('/\{\s*(.*?)\s*\}/', $expression, $matches) && count($matches[1])) {
             return array_merge([$name], static::parameters($matches[1]));
         }
 
@@ -74,13 +74,13 @@ class Parser
                 $description
             ),
             str_ends_with($token, '?') => new InputArgument(trim($token, '?'), InputArgument::OPTIONAL, $description),
-            preg_match('/(.+)=\*(.+)/', $token, $matches) => new InputArgument(
+            preg_match('/(.+)\=\*(.+)/', $token, $matches) => new InputArgument(
                 $matches[1],
                 InputArgument::IS_ARRAY,
                 $description,
                 preg_split('/,\s?/', $matches[2])
             ),
-            preg_match('/(.+)=(.+)/', $token, $matches) => new InputArgument(
+            preg_match('/(.+)\=(.+)/', $token, $matches) => new InputArgument(
                 $matches[1],
                 InputArgument::OPTIONAL,
                 $description,
@@ -101,16 +101,38 @@ class Parser
 
         if (isset($matches[1])) {
             $shortcut = $matches[0];
-            [, $token] = $matches;
+            $token = $matches[1];
         } else {
             $shortcut = null;
         }
 
         return match (true) {
-            str_ends_with($token, '=') => new InputOption(trim($token, '='), $shortcut, InputOption::VALUE_OPTIONAL, $description),
-            str_ends_with($token, '=*') => new InputOption(trim($token, '=*'), $shortcut, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, $description),
-            preg_match('/(.+)=\*(.+)/', $token, $matches) => new InputOption($matches[1], $shortcut, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, $description, preg_split('/,\s?/', $matches[2])),
-            preg_match('/(.+)=(.+)/', $token, $matches) => new InputOption($matches[1], $shortcut, InputOption::VALUE_OPTIONAL, $description, $matches[2]),
+            str_ends_with($token, '=') => new InputOption(
+                trim($token, '='),
+                $shortcut,
+                InputOption::VALUE_OPTIONAL,
+                $description,
+            ),
+            str_ends_with($token, '=*') => new InputOption(
+                trim($token, '=*'),
+                $shortcut,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                $description,
+            ),
+            preg_match('/(.+)\=\*(.+)/', $token, $matches) => new InputOption(
+                $matches[1],
+                $shortcut,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                $description,
+                preg_split('/,\s?/', $matches[2]),
+            ),
+            preg_match('/(.+)\=(.+)/', $token, $matches) => new InputOption(
+                $matches[1],
+                $shortcut,
+                InputOption::VALUE_OPTIONAL,
+                $description,
+                $matches[2],
+            ),
             default => new InputOption($token, $shortcut, InputOption::VALUE_NONE, $description),
         };
     }
