@@ -81,12 +81,12 @@ trait InteractsWithIO
 
     public function title(string $message): void
     {
-        $this->io->title($message);
+        $this->output->title($message);
     }
 
     public function section(string $message): void
     {
-        $this->io->section($message);
+        $this->output->section($message);
     }
 
     /**
@@ -196,32 +196,32 @@ trait InteractsWithIO
 
     public function progressStart(int $max = 0): void
     {
-        $this->io->progressStart($max);
+        $this->output->progressStart($max);
     }
 
     public function progressAdvance(int $step = 1): void
     {
-        $this->io->progressAdvance($step);
+        $this->output->progressAdvance($step);
     }
 
     public function progressFinish(): void
     {
-        $this->io->progressFinish();
+        $this->output->progressFinish();
     }
 
     public function listing(array $elements): void
     {
-        $this->io->listing($elements);
+        $this->output->listing($elements);
     }
 
     public function note(array | string $message): void
     {
-        $this->io->note($message);
+        $this->output->note($message);
     }
 
     public function caution(array | string $message): void
     {
-        $this->io->caution($message);
+        $this->output->caution($message);
     }
 
     /**
@@ -229,7 +229,7 @@ trait InteractsWithIO
      */
     public function text(array | string $message): void
     {
-        $this->io->text($message);
+        $this->output->text($message);
     }
 
     /**
@@ -268,7 +268,7 @@ trait InteractsWithIO
      */
     public function success(array | string $message): void
     {
-        $this->io->success($message);
+        $this->output->success($message);
     }
 
     public function newLine(int $count = 1): static
