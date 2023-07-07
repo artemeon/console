@@ -1,0 +1,21 @@
+{
+    "name": "artemeon/console",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Artemeon\\Console\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Marc Reichel",
+            "email": "marc.reichel@artemeon.de"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "nunomaduro/termwind": "^1.5",
+        "symfony/console": "^6.0.0"
+    }
+}
