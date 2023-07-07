@@ -27,7 +27,7 @@ class ArtemeonStyle extends SymfonyStyle
      */
     public function title(string $message): void
     {
-        $this->newLine();
+        parent::title($message);
     }
 
     /**

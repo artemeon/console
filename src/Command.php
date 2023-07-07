@@ -108,6 +108,11 @@ class Command extends SymfonyCommand
         $this->io->warning($message);
     }
 
+    protected function success(array | string $message): void
+    {
+        $this->io->success($message);
+    }
+
     protected function listing(array $elements): void
     {
         $this->io->listing($elements);
