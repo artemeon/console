@@ -44,8 +44,6 @@ class Command extends SymfonyCommand
      */
     protected array $aliases;
 
-    private ArtemeonStyle $io;
-
     public function __construct()
     {
         if (isset($this->signature)) {
@@ -76,7 +74,7 @@ class Command extends SymfonyCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->input = $input;
-        $this->io = new ArtemeonStyle($input, $output);
+        $this->output = new ArtemeonStyle($input, $output);
 
         $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
 
