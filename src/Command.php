@@ -11,6 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Command extends SymfonyCommand
 {
+    use Concerns\HasParameters;
+    use Concerns\InteractsWithIO;
+
     /**
      * The name and signature of the console command.
      */
@@ -24,9 +27,23 @@ class Command extends SymfonyCommand
     /**
      * The console command description.
      */
-    protected ?string $description;
+    protected ?string $description = null;
 
-    private InputInterface $input;
+    /**
+     * The console command help text.
+     */
+    protected ?string $help = null;
+
+    /**
+     * Indicates whether the command should be shown in the command list.
+     */
+    protected bool $hidden = false;
+
+    /**
+     * The console command name aliases.
+     */
+    protected array $aliases;
+
     private ArtemeonStyle $io;
 
     public function __construct()
@@ -35,6 +52,24 @@ class Command extends SymfonyCommand
             $this->configureUsingFluentDefinition();
         } else {
             parent::__construct($this->name);
+        }
+
+        if (!isset($this->description)) {
+            $this->setDescription((string) static::getDefaultDescription());
+        } else {
+            $this->setDescription((string) $this->description);
+        }
+
+        $this->setHelp((string) $this->help);
+
+        $this->setHidden($this->isHidden());
+
+        if (isset($this->aliases)) {
+            $this->setAliases($this->aliases);
+        }
+
+        if (!isset($this->signature)) {
+            $this->specifyParameters();
         }
     }
 
@@ -48,121 +83,6 @@ class Command extends SymfonyCommand
         return [$this, $method]();
     }
 
-    protected function arguments(): array
-    {
-        return $this->input->getArguments();
-    }
-
-    protected function argument(string $name): mixed
-    {
-        return $this->input->getArgument($name);
-    }
-
-    protected function options(): array
-    {
-        return $this->input->getOptions();
-    }
-
-    protected function option(string $name): mixed
-    {
-        return $this->input->getOption($name);
-    }
-
-    protected function ask(string $question, string $default = null, callable $validator = null): mixed
-    {
-        return $this->io->ask($question, $default, $validator);
-    }
-
-    protected function secret(string $question, callable $validator = null): mixed
-    {
-        return $this->io->askHidden($question, $validator);
-    }
-
-    protected function title(string $message): void
-    {
-        $this->io->title($message);
-    }
-
-    protected function section(string $message): void
-    {
-        $this->io->section($message);
-    }
-
-    protected function text(array | string $message): void
-    {
-        $this->io->text($message);
-    }
-
-    protected function info(array | string $message): void
-    {
-        $this->text($message);
-    }
-
-    protected function error(array | string $message): void
-    {
-        $this->io->error($message);
-    }
-
-    protected function warn(array | string $message): void
-    {
-        $this->io->warning($message);
-    }
-
-    protected function success(array | string $message): void
-    {
-        $this->io->success($message);
-    }
-
-    protected function listing(array $elements): void
-    {
-        $this->io->listing($elements);
-    }
-
-    protected function note(array | string $message): void
-    {
-        $this->io->note($message);
-    }
-
-    protected function caution(array | string $message): void
-    {
-        $this->io->caution($message);
-    }
-
-    protected function table(array $headers, array $rows): void
-    {
-        $this->io->table($headers, $rows);
-    }
-
-    protected function confirm(string $question, bool $default = true): bool
-    {
-        return $this->io->confirm($question, $default);
-    }
-
-    protected function choice(string $question, array $choices, mixed $default = null, bool $multiSelect = false): mixed
-    {
-        return $this->io->choice($question, $choices, $default, $multiSelect);
-    }
-
-    protected function newLine(int $count = 1): void
-    {
-        $this->io->newLine($count);
-    }
-
-    protected function progressStart(int $max = 0): void
-    {
-        $this->io->progressStart($max);
-    }
-
-    protected function progressAdvance(int $step = 1): void
-    {
-        $this->io->progressAdvance($step);
-    }
-
-    protected function progressFinish(): void
-    {
-        $this->io->progressFinish();
-    }
-
     protected function configureUsingFluentDefinition(): void
     {
         [$name, $arguments, $options] = Parser::parse($this->signature);
@@ -171,5 +91,17 @@ class Command extends SymfonyCommand
 
         $this->getDefinition()->addArguments($arguments);
         $this->getDefinition()->addOptions($options);
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->hidden;
+    }
+
+    public function setHidden(bool $hidden = true): static
+    {
+        parent::setHidden($this->hidden = $hidden);
+
+        return $this;
     }
 }
