@@ -237,7 +237,7 @@ trait InteractsWithIO
      */
     public function info(array | string $message): void
     {
-        $this->text($message);
+        $this->output->info($message);
     }
 
     public function line(string $message, ?string $style = null, int | null | string $verbosity = null): void
