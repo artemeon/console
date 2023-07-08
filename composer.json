@@ -1,5 +1,6 @@
 {
     "name": "artemeon/console",
+    "description": "Wrapper library around `symfony/console` providing a customized console styling and some helpers.",
     "type": "library",
     "license": "MIT",
     "autoload": {

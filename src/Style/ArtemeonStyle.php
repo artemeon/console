@@ -49,7 +49,7 @@ class ArtemeonStyle extends SymfonyStyle
     /**
      * @inheritDoc
      */
-    public function text(array | string $message): void
+    public function info(array | string $message): void
     {
         if ($this->output->isQuiet()) {
             return;
@@ -60,6 +60,26 @@ class ArtemeonStyle extends SymfonyStyle
                 <<<HTML
 <div class="mb-1 ml-1 px-1">
     <span class="bg-blue-500 text-white px-1 mr-4">INFO</span> $m
+</div>
+HTML
+            );
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function text(array | string $message): void
+    {
+        if ($this->output->isQuiet()) {
+            return;
+        }
+
+        foreach ($this->transformMessage($message) as $m) {
+            render(
+                <<<HTML
+<div class="mb-1 ml-1 px-1">
+    $m
 </div>
 HTML
             );
