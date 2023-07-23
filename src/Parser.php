@@ -100,18 +100,28 @@ class Parser
         $matches = preg_split('/\s*\|\s*/', $token, 2);
 
         if (isset($matches[1])) {
-            $shortcut = $matches[0];
-            $token = $matches[1];
+            [$shortcut, $token] = $matches;
         } else {
             $shortcut = null;
         }
 
         return match (true) {
+            str_ends_with($token, '==') => new InputOption(
+                trim($token, '='),
+                $shortcut,
+                InputOption::VALUE_REQUIRED,
+                $description,
+            ),
             str_ends_with($token, '=') => new InputOption(
                 trim($token, '='),
                 $shortcut,
                 InputOption::VALUE_OPTIONAL,
                 $description,
+            ),
+            str_ends_with($token, '==*') => new InputOption(
+                trim($token, '=*'),
+                $shortcut,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             ),
             str_ends_with($token, '=*') => new InputOption(
                 trim($token, '=*'),
@@ -132,6 +142,12 @@ class Parser
                 InputOption::VALUE_OPTIONAL,
                 $description,
                 $matches[2],
+            ),
+            str_ends_with($token, '!') => new InputOption(
+                trim($token, '!'),
+                $shortcut,
+                InputOption::VALUE_NEGATABLE,
+                $description,
             ),
             default => new InputOption($token, $shortcut, InputOption::VALUE_NONE, $description),
         };
