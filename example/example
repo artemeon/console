@@ -1,0 +1,53 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Artemeon\Console\Commands\ConfirmExampleCommand;
+use Artemeon\Console\Commands\MultiSelectExampleCommand;
+use Artemeon\Console\Commands\PasswordExampleCommand;
+use Artemeon\Console\Commands\SelectExampleCommand;
+use Artemeon\Console\Commands\TextExampleCommand;
+use Symfony\Component\Console\Application;
+
+(new class() {
+    public function main(): void
+    {
+        $this->autoload();
+
+        $app = new Application();
+        $app->add(new ConfirmExampleCommand());
+        $app->add(new MultiSelectExampleCommand());
+        $app->add(new PasswordExampleCommand());
+        $app->add(new SelectExampleCommand());
+        $app->add(new TextExampleCommand());
+        $app->run();
+    }
+
+    private function autoload(): void
+    {
+        if (isset($GLOBALS['_composer_autoload_path'])) {
+            define('COMPOSER_INSTALL_PATH', $GLOBALS['_composer_autoload_path']);
+
+            unset($GLOBALS['_composer_autoload_path']);
+        } else {
+            foreach (
+                [
+                    __DIR__ . '/../../../autoload.php',
+                    __DIR__ . '/../../vendor/autoload.php',
+                    __DIR__ . '/../vendor/autoload.php'
+                ] as $file
+            ) {
+                if (file_exists($file)) {
+                    define('COMPOSER_INSTALL_PATH', $file);
+
+                    break;
+                }
+            }
+
+            unset($file);
+        }
+
+        require COMPOSER_INSTALL_PATH;
+    }
+})->main();

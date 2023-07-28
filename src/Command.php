@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Artemeon\Console;
 
-use Artemeon\Console\Style\ArtemeonStyle;
+use Artemeon\Console\Styles\ArtemeonStyle;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

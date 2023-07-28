@@ -4,14 +4,23 @@ declare(strict_types=1);
 
 namespace Artemeon\Console\Concerns;
 
-use Artemeon\Console\Style\ArtemeonStyle;
+use Artemeon\Console\Styles\ArtemeonStyle;
 use Closure;
+use Illuminate\Support\Collection;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
+
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\multiselect;
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\search;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\spin;
+use function Laravel\Prompts\suggest;
+use function Laravel\Prompts\text;
 
 trait InteractsWithIO
 {
@@ -92,26 +101,58 @@ trait InteractsWithIO
     /**
      * Confirm a question.
      */
-    public function confirm(string $question, bool $default = false): bool
-    {
-        return $this->output->confirm($question, $default);
+    public function confirm(
+        string $label,
+        bool $default = true,
+        string $yes = 'Yes',
+        string $no = 'No',
+        bool | string $required = false,
+        Closure $validate = null,
+    ): bool {
+        return confirm(label: $label, default: $default, yes: $yes, no: $no, required: $required, validate: $validate);
     }
 
-    public function ask(string $question, ?string $default = null, callable $validator = null): mixed
-    {
-        return $this->output->ask($question, $default, $validator);
+    public function ask(
+        string $label,
+        string $placeholder = '',
+        string $default = '',
+        bool | string $required = false,
+        Closure $validate = null,
+    ): string {
+        return text(
+            label: $label,
+            placeholder: $placeholder,
+            default: $default,
+            required: $required,
+            validate: $validate
+        );
+    }
+
+    public function suggest(
+        string $label,
+        array | Closure | Collection $options,
+        string $placeholder = '',
+        string $default = '',
+        int $scroll = 5,
+        bool | string $required = false,
+    ): string {
+        return suggest($label, $options, $placeholder, $default, $scroll, $required);
     }
 
     /**
      * Prompt the user for input with auto completion.
+     *
+     * @deprecated Use {@see self::suggest()} instead.
      */
-    public function anticipate(string $question, array | callable $choices, ?string $default = null): mixed
+    public function anticipate(string $label, array | Closure | Collection $options, string $default = ''): string
     {
-        return $this->askWithCompletion($question, $choices, $default);
+        return $this->suggest($label, $options, default: $default);
     }
 
     /**
      * Prompt the user for input with auto completion.
+     *
+     * @deprecated
      */
     public function askWithCompletion(string $question, array | callable $choices, ?string $default = null): mixed
     {
@@ -125,34 +166,84 @@ trait InteractsWithIO
     }
 
     /**
-     * Prompt the user for input but hide the answer from the console.
+     * Prompt the user for input, hiding the value.
      */
-    public function secret(string $question, bool $fallback = true): mixed
-    {
-        $questionObject = new Question($question);
+    public function password(
+        string $label,
+        string $placeholder = '',
+        bool | string $required = false,
+        Closure $validate = null,
+    ): string {
+        return password($label, $placeholder, $required, $validate);
+    }
 
-        $questionObject->setHidden(true)->setHiddenFallback($fallback);
-
-        return $this->output->askQuestion($questionObject);
+    /**
+     * Prompt the user for input but hide the answer from the console.
+     *
+     * @deprecated Use {@see self::password()} instead.
+     */
+    public function secret(
+        string $label,
+        string $placeholder = '',
+        bool | string $required = false,
+        Closure $validate = null,
+    ): string {
+        return $this->password($label, $placeholder, $required, $validate);
     }
 
     /**
      * Give the user a single choice from an array of answers.
      */
-    public function choice(string $question, array $choices, int | null | string $default = null, mixed $attempts = null, bool $multiple = false): array | string
-    {
-        $questionObject = new ChoiceQuestion($question, $choices, $default);
+    public function select(
+        string $label,
+        array | Collection $options,
+        int | string $default = null,
+        int $scroll = 5,
+        Closure $validate = null,
+    ): int | string {
+        return select($label, $options, $default, $scroll, $validate);
+    }
 
-        $questionObject->setMaxAttempts($attempts)->setMultiselect($multiple);
+    /**
+     * Give the user a single choice from an array of answers.
+     *
+     * @deprecated Use {@see self::select} instead.
+     */
+    public function choice(
+        string $label,
+        array | Collection $options,
+        int | string $default = null,
+        int $scroll = 5,
+        Closure $validate = null,
+    ): int | string {
+        return $this->select($label, $options, $default, $scroll, $validate);
+    }
 
-        return $this->output->askQuestion($questionObject);
+    /**
+     * Prompt the user to select multiple options.
+     *
+     * @return array<int | string>
+     */
+    public function multiselect(
+        string $label,
+        array | Collection $options,
+        array | Collection $default = [],
+        int $scroll = 5,
+        bool | string $required = false,
+        Closure $validate = null,
+    ): array {
+        return multiselect($label, $options, $default, $scroll, $required, $validate);
     }
 
     /**
      * Format input to textual table.
      */
-    public function table(array $headers, array $rows, string | TableStyle $tableStyle = 'default', array $columnStyles = []): void
-    {
+    public function table(
+        array $headers,
+        array $rows,
+        string | TableStyle $tableStyle = 'default',
+        array $columnStyles = [],
+    ): void {
         $table = new Table($this->output);
 
         $table->setHeaders($headers)->setRows($rows)->setStyle($tableStyle);
@@ -162,6 +253,22 @@ trait InteractsWithIO
         }
 
         $table->render();
+    }
+
+    /**
+     * Render a spinner while the given callback is executing.
+     */
+    public function spin(Closure $callback, string $message = ''): mixed
+    {
+        return spin($callback, $message);
+    }
+
+    /**
+     * Allow the user to search for an option.
+     */
+    public function search(string $label, Closure $options, string $placeholder = '', int $scroll = 5): int | string
+    {
+        return search($label, $options, $placeholder, $scroll);
     }
 
     /**
