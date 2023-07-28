@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Artemeon\Console\Style;
+namespace Artemeon\Console\Styles;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
