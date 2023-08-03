@@ -109,6 +109,10 @@ trait InteractsWithIO
         bool | string $required = false,
         Closure $validate = null,
     ): bool {
+        if ($this->isWindows()) {
+            return $this->output->confirm($label, $default);
+        }
+
         return confirm(label: $label, default: $default, yes: $yes, no: $no, required: $required, validate: $validate);
     }
 
@@ -119,6 +123,10 @@ trait InteractsWithIO
         bool | string $required = false,
         Closure $validate = null,
     ): string {
+        if ($this->isWindows()) {
+            return $this->output->ask($label, $default);
+        }
+
         return text(
             label: $label,
             placeholder: $placeholder,
@@ -136,6 +144,10 @@ trait InteractsWithIO
         int $scroll = 5,
         bool | string $required = false,
     ): string {
+        if (is_array($options) && $this->isWindows()) {
+            return $this->output->choice($label, $options, $default);
+        }
+
         return suggest($label, $options, $placeholder, $default, $scroll, $required);
     }
 
@@ -174,6 +186,10 @@ trait InteractsWithIO
         bool | string $required = false,
         Closure $validate = null,
     ): string {
+        if ($this->isWindows()) {
+            return $this->output->askHidden($label);
+        }
+
         return password($label, $placeholder, $required, $validate);
     }
 
@@ -201,6 +217,10 @@ trait InteractsWithIO
         int $scroll = 5,
         Closure $validate = null,
     ): int | string {
+        if (is_array($options) && $this->isWindows()) {
+            return $this->output->choice($label, $options, $default);
+        }
+
         return select($label, $options, $default, $scroll, $validate);
     }
 
@@ -232,6 +252,10 @@ trait InteractsWithIO
         bool | string $required = false,
         Closure $validate = null,
     ): array {
+        if (is_array($options) && is_array($default) && $this->isWindows()) {
+            return $this->output->choice($label, $options, $default, true);
+        }
+
         return multiselect($label, $options, $default, $scroll, $required, $validate);
     }
 
@@ -260,6 +284,12 @@ trait InteractsWithIO
      */
     public function spin(Closure $callback, string $message = ''): mixed
     {
+        if ($this->isWindows()) {
+            $callback();
+
+            return '';
+        }
+
         return spin($callback, $message);
     }
 
@@ -394,5 +424,10 @@ trait InteractsWithIO
         }
 
         return $level;
+    }
+
+    protected function isWindows(): bool
+    {
+        return strtolower(PHP_OS_FAMILY) === 'windows';
     }
 }
