@@ -25,14 +25,6 @@ class ArtemeonStyle extends SymfonyStyle
     /**
      * @inheritDoc
      */
-    public function title(string $message): void
-    {
-        parent::title($message);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function section(string $message): void
     {
         if ($this->output->isQuiet()) {
