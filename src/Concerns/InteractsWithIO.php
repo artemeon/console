@@ -43,7 +43,7 @@ trait InteractsWithIO
     /**
      * Get the value of a command argument.
      */
-    public function argument(?string $key = null): array | bool | null | string
+    public function argument(?string $key = null): array | bool | string | null
     {
         if ($key === null) {
             return $this->input->getArguments();
@@ -71,9 +71,9 @@ trait InteractsWithIO
     /**
      * Get the value of a command option.
      */
-    public function option(?string $key = null): array | bool | null | string
+    public function option(?string $key = null): array | bool | string | null
     {
-        if (is_null($key)) {
+        if (null === $key) {
             return $this->input->getOptions();
         }
 
@@ -132,7 +132,7 @@ trait InteractsWithIO
             placeholder: $placeholder,
             default: $default,
             required: $required,
-            validate: $validate
+            validate: $validate,
         );
     }
 
@@ -377,7 +377,7 @@ trait InteractsWithIO
         $this->output->info($message);
     }
 
-    public function line(string $message, ?string $style = null, int | null | string $verbosity = null): void
+    public function line(string $message, ?string $style = null, int | string | null $verbosity = null): void
     {
         $styled = $style ? "<$style>$message</$style>" : $message;
 
@@ -415,7 +415,7 @@ trait InteractsWithIO
         return $this;
     }
 
-    protected function parseVerbosity(int | null | string $level = null): int
+    protected function parseVerbosity(int | string | null $level = null): int
     {
         if (isset($this->verbosityMap[$level])) {
             $level = $this->verbosityMap[$level];
