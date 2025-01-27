@@ -14,7 +14,7 @@ class Parser
      * Parse the given console command definition into an array.
      *
      * @throws InvalidArgumentException
-     * @return array{string, empty, empty}
+     * @return array{string, InputArgument[], InputOption[]}
      */
     public static function parse(string $expression): array
     {
@@ -161,11 +161,14 @@ class Parser
     /**
      * Parse the token into its token and description segments.
      *
-     * @return array{string,string}
+     * @return array{string,string}|string[]
      */
     protected static function extractDescription(string $token): array
     {
         $parts = preg_split('/\s+:\s+/', trim($token), 2);
+        if ($parts === false) {
+            return [];
+        }
 
         return count($parts) === 2 ? $parts : [$token, ''];
     }

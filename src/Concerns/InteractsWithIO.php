@@ -40,7 +40,7 @@ trait InteractsWithIO
         'normal' => OutputInterface::VERBOSITY_NORMAL,
     ];
 
-    public function hasArgument(int | string $name): bool
+    public function hasArgument(string $name): bool
     {
         return $this->input->hasArgument($name);
     }
@@ -66,7 +66,7 @@ trait InteractsWithIO
      */
     public function arguments(): array
     {
-        return $this->argument();
+        return (array) $this->argument();
     }
 
     /**
@@ -98,7 +98,7 @@ trait InteractsWithIO
      */
     public function options(): array
     {
-        return $this->option();
+        return (array) $this->option();
     }
 
     public function title(string $message): void
@@ -342,7 +342,11 @@ trait InteractsWithIO
     public function withProgressBar(int | iterable $totalSteps, Closure $callback): mixed
     {
         $bar = $this->output->createProgressBar(
-            is_iterable($totalSteps) ? count($totalSteps) : $totalSteps,
+            match (true) {
+                is_int($totalSteps) => $totalSteps,
+                is_countable($totalSteps) => count($totalSteps),
+                is_iterable($totalSteps) => count(iterator_to_array($totalSteps)),
+            },
         );
 
         $bar->start();
