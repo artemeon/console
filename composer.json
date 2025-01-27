@@ -18,7 +18,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "illuminate/support": "^11.40.0",
         "laravel/prompts": "^0.3.3",
         "nunomaduro/termwind": "^1.5|^2.0",
