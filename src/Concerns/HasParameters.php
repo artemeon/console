@@ -33,6 +33,8 @@ trait HasParameters
 
     /**
      * Get the console command arguments.
+     *
+     * @return InputArgument[]
      */
     protected function getArguments(): array
     {
@@ -41,6 +43,8 @@ trait HasParameters
 
     /**
      * Get the console command options.
+     *
+     * @return InputOption[]
      */
     protected function getOptions(): array
     {

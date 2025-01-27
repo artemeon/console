@@ -8,6 +8,7 @@ use Artemeon\Console\Styles\ArtemeonStyle;
 use Closure;
 use Illuminate\Support\Collection;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,6 +28,10 @@ trait InteractsWithIO
     protected InputInterface $input;
     protected ArtemeonStyle $output;
     protected int $verbosity = OutputInterface::VERBOSITY_NORMAL;
+
+    /**
+     * @var array<string, int>
+     */
     protected array $verbosityMap = [
         'v' => OutputInterface::VERBOSITY_VERBOSE,
         'vv' => OutputInterface::VERBOSITY_VERY_VERBOSE,
@@ -42,6 +47,8 @@ trait InteractsWithIO
 
     /**
      * Get the value of a command argument.
+     *
+     * @return array<string|bool|int|float|array<int,mixed>|null> | bool | string | null
      */
     public function argument(?string $key = null): array | bool | string | null
     {
@@ -54,6 +61,8 @@ trait InteractsWithIO
 
     /**
      * Get all the arguments passed to the command.
+     *
+     * @return array<string|bool|int|float|array<int,mixed>|null>
      */
     public function arguments(): array
     {
@@ -70,6 +79,8 @@ trait InteractsWithIO
 
     /**
      * Get the value of a command option.
+     *
+     * @return array<string|bool|int|float|array<int,mixed>|null> | bool | string | null
      */
     public function option(?string $key = null): array | bool | string | null
     {
@@ -82,6 +93,8 @@ trait InteractsWithIO
 
     /**
      * Get all the options passed to the command.
+     *
+     * @return array<string|bool|int|float|array<int,mixed>|null>
      */
     public function options(): array
     {
@@ -136,6 +149,9 @@ trait InteractsWithIO
         );
     }
 
+    /**
+     * @param array<string>|Collection<int, string>|Closure(string): array<string> $options
+     */
     public function suggest(
         string $label,
         array | Closure | Collection $options,
@@ -153,6 +169,8 @@ trait InteractsWithIO
 
     /**
      * Prompt the user for input with auto completion.
+     *
+     * @param array<string>|Collection<int, string>|Closure(string): array<string> $options
      *
      * @deprecated Use {@see self::suggest()} instead.
      */
@@ -209,6 +227,8 @@ trait InteractsWithIO
 
     /**
      * Give the user a single choice from an array of answers.
+     *
+     * @param array<int|string, string>|Collection<int|string, string> $options
      */
     public function select(
         string $label,
@@ -227,6 +247,8 @@ trait InteractsWithIO
     /**
      * Give the user a single choice from an array of answers.
      *
+     * @param array<int|string, string>|Collection<int|string, string> $options
+     *
      * @deprecated Use {@see self::select} instead.
      */
     public function choice(
@@ -241,6 +263,9 @@ trait InteractsWithIO
 
     /**
      * Prompt the user to select multiple options.
+     *
+     * @param array<int|string, string>|Collection<int|string, string> $options
+     * @param array<int|string>|Collection<int, int|string> $default
      *
      * @return array<int | string>
      */
@@ -261,6 +286,10 @@ trait InteractsWithIO
 
     /**
      * Format input to textual table.
+     *
+     * @param string[] $headers
+     * @param array<int, TableSeparator|array<int,mixed>> $rows
+     * @param array<int, TableStyle|string> $columnStyles
      */
     public function table(
         array $headers,
@@ -281,6 +310,10 @@ trait InteractsWithIO
 
     /**
      * Render a spinner while the given callback is executing.
+     *
+     * @template TReturn of mixed
+     *
+     * @param Closure(): TReturn $callback
      */
     public function spin(Closure $callback, string $message = ''): mixed
     {
@@ -303,6 +336,8 @@ trait InteractsWithIO
 
     /**
      * Execute a given callback while advancing a progress bar.
+     *
+     * @param int|iterable<mixed> $totalSteps
      */
     public function withProgressBar(int | iterable $totalSteps, Closure $callback): mixed
     {
@@ -346,16 +381,25 @@ trait InteractsWithIO
         $this->output->progressFinish();
     }
 
+    /**
+     * @param string[] $elements
+     */
     public function listing(array $elements): void
     {
         $this->output->listing($elements);
     }
 
+    /**
+     * @param string[]|string $message
+     */
     public function note(array | string $message): void
     {
         $this->output->note($message);
     }
 
+    /**
+     * @param string[]|string $message
+     */
     public function caution(array | string $message): void
     {
         $this->output->caution($message);
@@ -363,6 +407,8 @@ trait InteractsWithIO
 
     /**
      * Write a string as information output.
+     *
+     * @param string[]|string $message
      */
     public function text(array | string $message): void
     {
@@ -371,6 +417,8 @@ trait InteractsWithIO
 
     /**
      * Write a string as information output.
+     *
+     * @param string[]|string $message
      */
     public function info(array | string $message): void
     {
@@ -386,6 +434,8 @@ trait InteractsWithIO
 
     /**
      * Write a string as error output.
+     *
+     * @param string[]|string $message
      */
     public function error(array | string $message): void
     {
@@ -394,6 +444,8 @@ trait InteractsWithIO
 
     /**
      * Write a string as warning output.
+     *
+     * @param string[]|string $message
      */
     public function warn(array | string $message): void
     {
@@ -402,6 +454,8 @@ trait InteractsWithIO
 
     /**
      * Write a string as success output.
+     *
+     * @param string[]|string $message
      */
     public function success(array | string $message): void
     {

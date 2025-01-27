@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method Artemeon\\Console\\Command\:\:askWithCompletion\(\) has parameter \$choices with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Command.php

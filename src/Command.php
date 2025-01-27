@@ -41,6 +41,8 @@ class Command extends SymfonyCommand
 
     /**
      * The console command name aliases.
+     *
+     * @var string[]
      */
     protected array $aliases;
 

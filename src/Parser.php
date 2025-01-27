@@ -14,6 +14,7 @@ class Parser
      * Parse the given console command definition into an array.
      *
      * @throws InvalidArgumentException
+     * @return array{string, empty, empty}
      */
     public static function parse(string $expression): array
     {
@@ -44,6 +45,8 @@ class Parser
      * Extract all parameters from the tokens.
      *
      * @param string[] $tokens
+     *
+     * @return array{InputArgument[], InputOption[]}
      */
     protected static function parameters(array $tokens): array
     {
