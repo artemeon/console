@@ -80,7 +80,8 @@ class Command extends SymfonyCommand
 
         $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
 
-        if (!is_callable($callable = [$this, $method])) {
+        $callable = [$this, $method];
+        if (!is_callable($callable)) {
             return self::FAILURE;
         }
 
