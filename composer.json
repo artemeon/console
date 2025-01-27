@@ -4,7 +4,9 @@
     "type": "library",
     "license": "MIT",
     "scripts": {
-        "phpstan": "php ./vendor/bin/phpstan analyse --memory-limit=4G"
+        "phpstan": "php ./vendor/bin/phpstan analyse --memory-limit=4G",
+        "pint": "./vendor/bin/pint --test -v",
+        "pint:fix": "./vendor/bin/pint"
     },
     "autoload": {
         "psr-4": {
@@ -18,12 +20,15 @@
         }
     ],
     "require": {
-        "php": "^8.1",
-        "laravel/prompts": "^0.1.0",
+        "php": "^8.2",
+        "illuminate/support": "^11.40.0",
+        "laravel/prompts": "^0.3.3",
         "nunomaduro/termwind": "^1.5|^2.0",
         "symfony/console": "^5.0|^6.0|^7.0"
     },
     "require-dev": {
-        "phpstan/phpstan": "^1.10"
+        "laravel/pint": "^1.20.0",
+        "phpstan/phpstan": "^2.1.2",
+        "rector/rector": "^2.0.7"
     }
 }

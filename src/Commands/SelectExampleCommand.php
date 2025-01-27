@@ -6,8 +6,6 @@ namespace Artemeon\Console\Commands;
 
 use Artemeon\Console\Command;
 
-use function Laravel\Prompts\spin;
-
 class SelectExampleCommand extends Command
 {
     protected string $signature = 'select';

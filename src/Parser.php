@@ -14,6 +14,7 @@ class Parser
      * Parse the given console command definition into an array.
      *
      * @throws InvalidArgumentException
+     * @return array{string, InputArgument[], InputOption[]}
      */
     public static function parse(string $expression): array
     {
@@ -42,6 +43,10 @@ class Parser
 
     /**
      * Extract all parameters from the tokens.
+     *
+     * @param string[] $tokens
+     *
+     * @return array{InputArgument[], InputOption[]}
      */
     protected static function parameters(array $tokens): array
     {
@@ -71,20 +76,20 @@ class Parser
             str_ends_with($token, '*') => new InputArgument(
                 trim($token, '*'),
                 InputArgument::IS_ARRAY | InputArgument::REQUIRED,
-                $description
+                $description,
             ),
             str_ends_with($token, '?') => new InputArgument(trim($token, '?'), InputArgument::OPTIONAL, $description),
             preg_match('/(.+)\=\*(.+)/', $token, $matches) => new InputArgument(
                 $matches[1],
                 InputArgument::IS_ARRAY,
                 $description,
-                preg_split('/,\s?/', $matches[2])
+                preg_split('/,\s?/', $matches[2]),
             ),
             preg_match('/(.+)\=(.+)/', $token, $matches) => new InputArgument(
                 $matches[1],
                 InputArgument::OPTIONAL,
                 $description,
-                $matches[2]
+                $matches[2],
             ),
             default => new InputArgument($token, InputArgument::REQUIRED, $description),
         };
@@ -155,10 +160,15 @@ class Parser
 
     /**
      * Parse the token into its token and description segments.
+     *
+     * @return array{string,string}|string[]
      */
     protected static function extractDescription(string $token): array
     {
         $parts = preg_split('/\s+:\s+/', trim($token), 2);
+        if ($parts === false) {
+            return [];
+        }
 
         return count($parts) === 2 ? $parts : [$token, ''];
     }

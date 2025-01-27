@@ -8,6 +8,7 @@ use Artemeon\Console\Styles\ArtemeonStyle;
 use Closure;
 use Illuminate\Support\Collection;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,6 +28,10 @@ trait InteractsWithIO
     protected InputInterface $input;
     protected ArtemeonStyle $output;
     protected int $verbosity = OutputInterface::VERBOSITY_NORMAL;
+
+    /**
+     * @var array<string, int>
+     */
     protected array $verbosityMap = [
         'v' => OutputInterface::VERBOSITY_VERBOSE,
         'vv' => OutputInterface::VERBOSITY_VERY_VERBOSE,
@@ -35,15 +40,17 @@ trait InteractsWithIO
         'normal' => OutputInterface::VERBOSITY_NORMAL,
     ];
 
-    public function hasArgument(int | string $name): bool
+    public function hasArgument(string $name): bool
     {
         return $this->input->hasArgument($name);
     }
 
     /**
      * Get the value of a command argument.
+     *
+     * @return array<string|bool|int|float|array<int,mixed>|null> | bool | string | null
      */
-    public function argument(?string $key = null): array | bool | null | string
+    public function argument(?string $key = null): array | bool | string | null
     {
         if ($key === null) {
             return $this->input->getArguments();
@@ -54,10 +61,12 @@ trait InteractsWithIO
 
     /**
      * Get all the arguments passed to the command.
+     *
+     * @return array<string|bool|int|float|array<int,mixed>|null>
      */
     public function arguments(): array
     {
-        return $this->argument();
+        return (array) $this->argument();
     }
 
     /**
@@ -70,10 +79,12 @@ trait InteractsWithIO
 
     /**
      * Get the value of a command option.
+     *
+     * @return array<string|bool|int|float|array<int,mixed>|null> | bool | string | null
      */
-    public function option(?string $key = null): array | bool | null | string
+    public function option(?string $key = null): array | bool | string | null
     {
-        if (is_null($key)) {
+        if (null === $key) {
             return $this->input->getOptions();
         }
 
@@ -82,10 +93,12 @@ trait InteractsWithIO
 
     /**
      * Get all the options passed to the command.
+     *
+     * @return array<string|bool|int|float|array<int,mixed>|null>
      */
     public function options(): array
     {
-        return $this->option();
+        return (array) $this->option();
     }
 
     public function title(string $message): void
@@ -107,7 +120,7 @@ trait InteractsWithIO
         string $yes = 'Yes',
         string $no = 'No',
         bool | string $required = false,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): bool {
         if ($this->isWindows()) {
             return $this->output->confirm($label, $default);
@@ -121,7 +134,7 @@ trait InteractsWithIO
         string $placeholder = '',
         string $default = '',
         bool | string $required = false,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): string {
         if ($this->isWindows()) {
             return $this->output->ask($label, $default);
@@ -132,10 +145,13 @@ trait InteractsWithIO
             placeholder: $placeholder,
             default: $default,
             required: $required,
-            validate: $validate
+            validate: $validate,
         );
     }
 
+    /**
+     * @param array<string>|Collection<int, string>|Closure(string): array<string> $options
+     */
     public function suggest(
         string $label,
         array | Closure | Collection $options,
@@ -153,6 +169,8 @@ trait InteractsWithIO
 
     /**
      * Prompt the user for input with auto completion.
+     *
+     * @param array<string>|Collection<int, string>|Closure(string): array<string> $options
      *
      * @deprecated Use {@see self::suggest()} instead.
      */
@@ -184,7 +202,7 @@ trait InteractsWithIO
         string $label,
         string $placeholder = '',
         bool | string $required = false,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): string {
         if ($this->isWindows()) {
             return $this->output->askHidden($label);
@@ -202,20 +220,22 @@ trait InteractsWithIO
         string $label,
         string $placeholder = '',
         bool | string $required = false,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): string {
         return $this->password($label, $placeholder, $required, $validate);
     }
 
     /**
      * Give the user a single choice from an array of answers.
+     *
+     * @param array<int|string, string>|Collection<int|string, string> $options
      */
     public function select(
         string $label,
         array | Collection $options,
-        int | string $default = null,
+        int | string | null $default = null,
         int $scroll = 5,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): int | string {
         if (is_array($options) && $this->isWindows()) {
             return $this->output->choice($label, $options, $default);
@@ -227,20 +247,25 @@ trait InteractsWithIO
     /**
      * Give the user a single choice from an array of answers.
      *
+     * @param array<int|string, string>|Collection<int|string, string> $options
+     *
      * @deprecated Use {@see self::select} instead.
      */
     public function choice(
         string $label,
         array | Collection $options,
-        int | string $default = null,
+        int | string | null $default = null,
         int $scroll = 5,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): int | string {
         return $this->select($label, $options, $default, $scroll, $validate);
     }
 
     /**
      * Prompt the user to select multiple options.
+     *
+     * @param array<int|string, string>|Collection<int|string, string> $options
+     * @param array<int|string>|Collection<int, int|string> $default
      *
      * @return array<int | string>
      */
@@ -250,7 +275,7 @@ trait InteractsWithIO
         array | Collection $default = [],
         int $scroll = 5,
         bool | string $required = false,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): array {
         if (is_array($options) && is_array($default) && $this->isWindows()) {
             return $this->output->choice($label, $options, $default, true);
@@ -261,6 +286,10 @@ trait InteractsWithIO
 
     /**
      * Format input to textual table.
+     *
+     * @param string[] $headers
+     * @param array<int, TableSeparator|array<int,mixed>> $rows
+     * @param array<int, TableStyle|string> $columnStyles
      */
     public function table(
         array $headers,
@@ -281,6 +310,10 @@ trait InteractsWithIO
 
     /**
      * Render a spinner while the given callback is executing.
+     *
+     * @template TReturn of mixed
+     *
+     * @param Closure(): TReturn $callback
      */
     public function spin(Closure $callback, string $message = ''): mixed
     {
@@ -303,11 +336,17 @@ trait InteractsWithIO
 
     /**
      * Execute a given callback while advancing a progress bar.
+     *
+     * @param int|iterable<mixed> $totalSteps
      */
     public function withProgressBar(int | iterable $totalSteps, Closure $callback): mixed
     {
         $bar = $this->output->createProgressBar(
-            is_iterable($totalSteps) ? count($totalSteps) : $totalSteps,
+            match (true) {
+                is_int($totalSteps) => $totalSteps,
+                is_countable($totalSteps) => count($totalSteps),
+                is_iterable($totalSteps) => count(iterator_to_array($totalSteps)),
+            },
         );
 
         $bar->start();
@@ -346,16 +385,25 @@ trait InteractsWithIO
         $this->output->progressFinish();
     }
 
+    /**
+     * @param string[] $elements
+     */
     public function listing(array $elements): void
     {
         $this->output->listing($elements);
     }
 
+    /**
+     * @param string[]|string $message
+     */
     public function note(array | string $message): void
     {
         $this->output->note($message);
     }
 
+    /**
+     * @param string[]|string $message
+     */
     public function caution(array | string $message): void
     {
         $this->output->caution($message);
@@ -363,6 +411,8 @@ trait InteractsWithIO
 
     /**
      * Write a string as information output.
+     *
+     * @param string[]|string $message
      */
     public function text(array | string $message): void
     {
@@ -371,13 +421,15 @@ trait InteractsWithIO
 
     /**
      * Write a string as information output.
+     *
+     * @param string[]|string $message
      */
     public function info(array | string $message): void
     {
         $this->output->info($message);
     }
 
-    public function line(string $message, ?string $style = null, int | null | string $verbosity = null): void
+    public function line(string $message, ?string $style = null, int | string | null $verbosity = null): void
     {
         $styled = $style ? "<$style>$message</$style>" : $message;
 
@@ -386,6 +438,8 @@ trait InteractsWithIO
 
     /**
      * Write a string as error output.
+     *
+     * @param string[]|string $message
      */
     public function error(array | string $message): void
     {
@@ -394,6 +448,8 @@ trait InteractsWithIO
 
     /**
      * Write a string as warning output.
+     *
+     * @param string[]|string $message
      */
     public function warn(array | string $message): void
     {
@@ -402,6 +458,8 @@ trait InteractsWithIO
 
     /**
      * Write a string as success output.
+     *
+     * @param string[]|string $message
      */
     public function success(array | string $message): void
     {
@@ -415,7 +473,7 @@ trait InteractsWithIO
         return $this;
     }
 
-    protected function parseVerbosity(int | null | string $level = null): int
+    protected function parseVerbosity(int | string | null $level = null): int
     {
         if (isset($this->verbosityMap[$level])) {
             $level = $this->verbosityMap[$level];

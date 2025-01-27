@@ -13,7 +13,7 @@ use function Termwind\terminal;
 
 class ArtemeonStyle extends SymfonyStyle
 {
-    private OutputInterface $output;
+    private readonly OutputInterface $output;
 
     public function __construct(InputInterface $input, OutputInterface $output)
     {
@@ -40,6 +40,8 @@ class ArtemeonStyle extends SymfonyStyle
 
     /**
      * @inheritDoc
+     *
+     * @param string[]|string $message
      */
     public function info(array | string $message): void
     {
@@ -60,6 +62,8 @@ HTML
 
     /**
      * @inheritDoc
+     *
+     * @param string[]|string $message
      */
     public function text(array | string $message): void
     {
@@ -80,6 +84,8 @@ HTML
 
     /**
      * @inheritDoc
+     *
+     * @param string[]|string $message
      */
     public function success(array | string $message): void
     {
@@ -100,6 +106,8 @@ HTML
 
     /**
      * @inheritDoc
+     *
+     * @param string[]|string $message
      */
     public function error(array | string $message): void
     {
@@ -120,6 +128,8 @@ HTML
 
     /**
      * @inheritDoc
+     *
+     * @param string[]|string $message
      */
     public function warning(array | string $message): void
     {
@@ -140,6 +150,8 @@ HTML
 
     /**
      * @inheritDoc
+     *
+     * @param string[]|string $message
      */
     public function note(array | string $message): void
     {
@@ -160,6 +172,8 @@ HTML
 
     /**
      * @inheritDoc
+     *
+     * @param string[]|string $message
      */
     public function caution(array | string $message): void
     {
@@ -178,6 +192,11 @@ HTML
         }
     }
 
+    /**
+     * @param string[]|string $message
+     *
+     * @return string[]
+     */
     private function transformMessage(array | string $message): array
     {
         return is_array($message) ? $message : [$message];

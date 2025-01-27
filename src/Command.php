@@ -41,6 +41,8 @@ class Command extends SymfonyCommand
 
     /**
      * The console command name aliases.
+     *
+     * @var string[]
      */
     protected array $aliases;
 
@@ -78,7 +80,12 @@ class Command extends SymfonyCommand
 
         $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
 
-        return [$this, $method]();
+        $callable = [$this, $method];
+        if (!is_callable($callable)) {
+            return self::FAILURE;
+        }
+
+        return $callable();
     }
 
     protected function configureUsingFluentDefinition(): void
