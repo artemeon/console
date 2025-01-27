@@ -107,7 +107,7 @@ trait InteractsWithIO
         string $yes = 'Yes',
         string $no = 'No',
         bool | string $required = false,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): bool {
         if ($this->isWindows()) {
             return $this->output->confirm($label, $default);
@@ -121,7 +121,7 @@ trait InteractsWithIO
         string $placeholder = '',
         string $default = '',
         bool | string $required = false,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): string {
         if ($this->isWindows()) {
             return $this->output->ask($label, $default);
@@ -184,7 +184,7 @@ trait InteractsWithIO
         string $label,
         string $placeholder = '',
         bool | string $required = false,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): string {
         if ($this->isWindows()) {
             return $this->output->askHidden($label);
@@ -202,7 +202,7 @@ trait InteractsWithIO
         string $label,
         string $placeholder = '',
         bool | string $required = false,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): string {
         return $this->password($label, $placeholder, $required, $validate);
     }
@@ -215,7 +215,7 @@ trait InteractsWithIO
         array | Collection $options,
         int | string $default = null,
         int $scroll = 5,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): int | string {
         if (is_array($options) && $this->isWindows()) {
             return $this->output->choice($label, $options, $default);
@@ -234,7 +234,7 @@ trait InteractsWithIO
         array | Collection $options,
         int | string $default = null,
         int $scroll = 5,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): int | string {
         return $this->select($label, $options, $default, $scroll, $validate);
     }
@@ -250,7 +250,7 @@ trait InteractsWithIO
         array | Collection $default = [],
         int $scroll = 5,
         bool | string $required = false,
-        Closure $validate = null,
+        ?Closure $validate = null,
     ): array {
         if (is_array($options) && is_array($default) && $this->isWindows()) {
             return $this->output->choice($label, $options, $default, true);

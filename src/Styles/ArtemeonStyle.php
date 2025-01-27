@@ -13,7 +13,7 @@ use function Termwind\terminal;
 
 class ArtemeonStyle extends SymfonyStyle
 {
-    private OutputInterface $output;
+    private readonly OutputInterface $output;
 
     public function __construct(InputInterface $input, OutputInterface $output)
     {

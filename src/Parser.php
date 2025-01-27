@@ -42,6 +42,8 @@ class Parser
 
     /**
      * Extract all parameters from the tokens.
+     *
+     * @param string[] $tokens
      */
     protected static function parameters(array $tokens): array
     {
@@ -155,6 +157,8 @@ class Parser
 
     /**
      * Parse the token into its token and description segments.
+     *
+     * @return array{string,string}
      */
     protected static function extractDescription(string $token): array
     {
