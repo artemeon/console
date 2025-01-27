@@ -213,7 +213,7 @@ trait InteractsWithIO
     public function select(
         string $label,
         array | Collection $options,
-        int | string $default = null,
+        int | string | null $default = null,
         int $scroll = 5,
         ?Closure $validate = null,
     ): int | string {
@@ -232,7 +232,7 @@ trait InteractsWithIO
     public function choice(
         string $label,
         array | Collection $options,
-        int | string $default = null,
+        int | string | null $default = null,
         int $scroll = 5,
         ?Closure $validate = null,
     ): int | string {
