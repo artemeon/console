@@ -4,7 +4,9 @@
     "type": "library",
     "license": "MIT",
     "scripts": {
-        "phpstan": "php ./vendor/bin/phpstan analyse --memory-limit=4G"
+        "phpstan": "php ./vendor/bin/phpstan analyse --memory-limit=4G",
+        "pint": "./vendor/bin/pint --test -v",
+        "pint:fix": "./vendor/bin/pint"
     },
     "autoload": {
         "psr-4": {
