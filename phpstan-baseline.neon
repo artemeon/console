@@ -5,3 +5,9 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Command.php
+
+		-
+			message: '#^Call to method width\(\) of internal class Termwind\\Terminal from outside its root namespace Termwind\.$#'
+			identifier: method.internalClass
+			count: 1
+			path: src/Styles/ArtemeonStyle.php
