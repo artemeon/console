@@ -134,14 +134,14 @@ class Parser
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 $description,
             ),
-            preg_match('/(.+)\=\*(.+)/', $token, $matches) => new InputOption(
+            preg_match('/(.+)\=\*(.+)/', $token, $matches) === 1 => new InputOption(
                 $matches[1],
                 $shortcut,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 $description,
                 preg_split('/,\s?/', $matches[2]),
             ),
-            preg_match('/(.+)\=(.+)/', $token, $matches) => new InputOption(
+            preg_match('/(.+)\=(.+)/', $token, $matches) === 1 => new InputOption(
                 $matches[1],
                 $shortcut,
                 InputOption::VALUE_OPTIONAL,
