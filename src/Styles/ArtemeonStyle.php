@@ -50,7 +50,7 @@ class ArtemeonStyle extends SymfonyStyle
         }
 
         foreach ($this->transformMessage($message) as $m) {
-            $this->output->write(parse(
+            $this->output->writeLn(parse(
                 <<<HTML
 <div class="mb-1 ml-1 px-1">
     <span class="bg-blue-500 text-white px-1 mr-4">INFO</span> $m
@@ -72,7 +72,7 @@ HTML
         }
 
         foreach ($this->transformMessage($message) as $m) {
-            $this->output->write(parse(
+            $this->output->writeLn(parse(
                 <<<HTML
 <div class="mb-1 ml-1 px-1">
     $m
@@ -94,7 +94,7 @@ HTML
         }
 
         foreach ($this->transformMessage($message) as $m) {
-            $this->output->write(parse(
+            $this->output->writeLn(parse(
                 <<<HTML
 <div class="mb-1 ml-1 px-1">
     <span class="bg-green-500 text-gray-900 px-1 mr-1">SUCCESS</span> $m
@@ -116,7 +116,7 @@ HTML
         }
 
         foreach ($this->transformMessage($message) as $m) {
-            $this->output->write(parse(
+            $this->output->writeLn(parse(
                 <<<HTML
 <div class="mb-1 ml-1 px-1">
     <span class="bg-red-500 text-white px-1 mr-1">ERROR !</span> $m
@@ -138,7 +138,7 @@ HTML
         }
 
         foreach ($this->transformMessage($message) as $m) {
-            $this->output->write(parse(
+            $this->output->writeLn(parse(
                 <<<HTML
 <div class="mb-1 ml-1 px-1">
     <span class="bg-yellow-500 text-gray-900 px-1 pr-2 mr-1">! WARN</span> $m
@@ -160,7 +160,7 @@ HTML
         }
 
         foreach ($this->transformMessage($message) as $m) {
-            $this->output->write(parse(
+            $this->output->writeLn(parse(
                 <<<HTML
 <div class="mb-1 ml-1 px-1">
     <span class="bg-yellow-500 text-gray-900 px-1 pr-2 mr-1">! NOTE</span> $m
@@ -182,7 +182,7 @@ HTML
         }
 
         foreach ($this->transformMessage($message) as $m) {
-            $this->output->write(parse(
+            $this->output->writeLn(parse(
                 <<<HTML
 <div class="mb-1 ml-1 px-1">
     <span class="bg-red-500 text-white px-1 mr-1">CAUTION</span> $m
