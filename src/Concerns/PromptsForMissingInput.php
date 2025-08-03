@@ -36,7 +36,7 @@ trait PromptsForMissingInput
             })
             ->each(function (InputArgument $argument) use ($input): void {
                 $label = $this->promptForMissingArgumentsUsing()[$argument->getName()] ??
-                    'What is ' . lcfirst($argument->getDescription() === '' ? 'the ' . $argument->getName() : $argument->getDescription()) . '?';
+                    'What is ' . lcfirst($argument->getDescription() === '' ? 'the ' . $argument->getName() : preg_replace('/[,.?!:]+$/', '', trim($argument->getDescription()))) . '?';
 
                 if ($label instanceof Closure) {
                     $input->setArgument($argument->getName(), $argument->isArray() ? Arr::wrap($label()) : $label());
