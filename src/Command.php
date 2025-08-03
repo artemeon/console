@@ -13,6 +13,7 @@ class Command extends SymfonyCommand
 {
     use Concerns\HasParameters;
     use Concerns\InteractsWithIO;
+    use Concerns\ConfiguresPrompts;
 
     /**
      * The name and signature of the console command.
@@ -54,10 +55,8 @@ class Command extends SymfonyCommand
             parent::__construct($this->name);
         }
 
-        if (!isset($this->description)) {
-            $this->setDescription((string) static::getDefaultDescription());
-        } else {
-            $this->setDescription((string) $this->description);
+        if ($this->description !== null) {
+            $this->setDescription($this->description);
         }
 
         $this->setHelp((string) $this->help);
@@ -77,6 +76,8 @@ class Command extends SymfonyCommand
     {
         $this->input = $input;
         $this->output = new ArtemeonStyle($input, $output);
+
+        $this->configurePrompts();
 
         $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
 

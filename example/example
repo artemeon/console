@@ -3,14 +3,11 @@
 
 declare(strict_types=1);
 
-use Artemeon\Console\Commands\ConfirmExampleCommand;
-use Artemeon\Console\Commands\MultiSelectExampleCommand;
-use Artemeon\Console\Commands\PasswordExampleCommand;
-use Artemeon\Console\Commands\SelectExampleCommand;
-use Artemeon\Console\Commands\TextExampleCommand;
+namespace Artemeon\Console\Example;
+
 use Symfony\Component\Console\Application;
 
-(new class() {
+(new class () {
     public function main(): void
     {
         $this->autoload();
@@ -35,7 +32,7 @@ use Symfony\Component\Console\Application;
                 [
                     __DIR__ . '/../../../autoload.php',
                     __DIR__ . '/../../vendor/autoload.php',
-                    __DIR__ . '/../vendor/autoload.php'
+                    __DIR__ . '/../vendor/autoload.php',
                 ] as $file
             ) {
                 if (file_exists($file)) {

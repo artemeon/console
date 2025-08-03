@@ -34,7 +34,7 @@ class Parser
      */
     protected static function name(string $expression): string
     {
-        if (!preg_match('/[^\s]+/', $expression, $matches)) {
+        if (in_array(preg_match('/\S+/', $expression, $matches), [0, false], true)) {
             throw new InvalidArgumentException('Unable to determine command name from signature.');
         }
 

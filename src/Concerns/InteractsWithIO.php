@@ -7,26 +7,35 @@ namespace Artemeon\Console\Concerns;
 use Artemeon\Console\Styles\ArtemeonStyle;
 use Closure;
 use Illuminate\Support\Collection;
+use Laravel\Prompts\FormBuilder;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Terminal;
 
+use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\form;
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\password;
+use function Laravel\Prompts\pause;
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\spin;
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
+use function Laravel\Prompts\textarea;
+use function Termwind\terminal;
 
 trait InteractsWithIO
 {
     protected InputInterface $input;
+
     protected ArtemeonStyle $output;
+
     protected int $verbosity = OutputInterface::VERBOSITY_NORMAL;
 
     /**
@@ -121,12 +130,19 @@ trait InteractsWithIO
         string $no = 'No',
         bool | string $required = false,
         ?Closure $validate = null,
+        string $hint = '',
+        ?Closure $transform = null,
     ): bool {
-        if ($this->isWindows()) {
-            return $this->output->confirm($label, $default);
-        }
-
-        return confirm(label: $label, default: $default, yes: $yes, no: $no, required: $required, validate: $validate);
+        return confirm(
+            label: $label,
+            default: $default,
+            yes: $yes,
+            no: $no,
+            required: $required,
+            validate: $validate,
+            hint: $hint,
+            transform: $transform,
+        );
     }
 
     public function ask(
@@ -135,17 +151,39 @@ trait InteractsWithIO
         string $default = '',
         bool | string $required = false,
         ?Closure $validate = null,
+        string $hint = '',
+        ?Closure $transform = null,
     ): string {
-        if ($this->isWindows()) {
-            return $this->output->ask($label, $default);
-        }
-
         return text(
             label: $label,
             placeholder: $placeholder,
             default: $default,
             required: $required,
             validate: $validate,
+            hint: $hint,
+            transform: $transform,
+        );
+    }
+
+    public function textarea(
+        string $label,
+        string $placeholder = '',
+        string $default = '',
+        bool | string $required = false,
+        ?Closure $validate = null,
+        string $hint = '',
+        int $rows = 5,
+        ?Closure $transform = null,
+    ): string {
+        return textarea(
+            label: $label,
+            placeholder: $placeholder,
+            default: $default,
+            required: $required,
+            validate: $validate,
+            hint: $hint,
+            rows: $rows,
+            transform: $transform,
         );
     }
 
@@ -159,12 +197,21 @@ trait InteractsWithIO
         string $default = '',
         int $scroll = 5,
         bool | string $required = false,
+        ?Closure $validate = null,
+        string $hint = '',
+        ?Closure $transform = null,
     ): string {
-        if (is_array($options) && $this->isWindows()) {
-            return $this->output->choice($label, $options, $default);
-        }
-
-        return suggest($label, $options, $placeholder, $default, $scroll, $required);
+        return suggest(
+            label: $label,
+            options: $options,
+            placeholder: $placeholder,
+            default: $default,
+            scroll: $scroll,
+            required: $required,
+            validate: $validate,
+            hint: $hint,
+            transform: $transform,
+        );
     }
 
     /**
@@ -203,12 +250,17 @@ trait InteractsWithIO
         string $placeholder = '',
         bool | string $required = false,
         ?Closure $validate = null,
+        string $hint = '',
+        ?Closure $transform = null,
     ): string {
-        if ($this->isWindows()) {
-            return $this->output->askHidden($label);
-        }
-
-        return password($label, $placeholder, $required, $validate);
+        return password(
+            label: $label,
+            placeholder: $placeholder,
+            required: $required,
+            validate: $validate,
+            hint: $hint,
+            transform: $transform,
+        );
     }
 
     /**
@@ -236,12 +288,20 @@ trait InteractsWithIO
         int | string | null $default = null,
         int $scroll = 5,
         ?Closure $validate = null,
+        string $hint = '',
+        string | true $required = true,
+        ?Closure $transform = null,
     ): int | string {
-        if (is_array($options) && $this->isWindows()) {
-            return $this->output->choice($label, $options, $default);
-        }
-
-        return select($label, $options, $default, $scroll, $validate);
+        return select(
+            label: $label,
+            options: $options,
+            default: $default,
+            scroll: $scroll,
+            validate: $validate,
+            hint: $hint,
+            required: $required,
+            transform: $transform,
+        );
     }
 
     /**
@@ -276,12 +336,19 @@ trait InteractsWithIO
         int $scroll = 5,
         bool | string $required = false,
         ?Closure $validate = null,
+        string $hint = 'Use the space bar to select options.',
+        ?Closure $transform = null,
     ): array {
-        if (is_array($options) && is_array($default) && $this->isWindows()) {
-            return $this->output->choice($label, $options, $default, true);
-        }
-
-        return multiselect($label, $options, $default, $scroll, $required, $validate);
+        return multiselect(
+            label: $label,
+            options: $options,
+            default: $default,
+            scroll: $scroll,
+            required: $required,
+            validate: $validate,
+            hint: $hint,
+            transform: $transform,
+        );
     }
 
     /**
@@ -317,29 +384,44 @@ trait InteractsWithIO
      */
     public function spin(Closure $callback, string $message = ''): mixed
     {
-        if ($this->isWindows()) {
-            $callback();
-
-            return '';
-        }
-
         return spin($callback, $message);
     }
 
     /**
      * Allow the user to search for an option.
      */
-    public function search(string $label, Closure $options, string $placeholder = '', int $scroll = 5): int | string
-    {
-        return search($label, $options, $placeholder, $scroll);
+    public function search(
+        string $label,
+        Closure $options,
+        string $placeholder = '',
+        int $scroll = 5,
+        ?Closure $validate = null,
+        string $hint = '',
+        string | true $required = true,
+        ?Closure $transform = null,
+    ): int | string {
+        return search(
+            label: $label,
+            options: $options,
+            placeholder: $placeholder,
+            scroll: $scroll,
+            validate: $validate,
+            hint: $hint,
+            required: $required,
+            transform: $transform,
+        );
     }
 
     /**
      * Execute a given callback while advancing a progress bar.
      *
-     * @param int|iterable<mixed> $totalSteps
+     * @template T of mixed
+     *
+     * @param int | iterable<T> $totalSteps
+     *
+     * @return int | iterable<T> | null
      */
-    public function withProgressBar(int | iterable $totalSteps, Closure $callback): mixed
+    public function withProgressBar(int | iterable $totalSteps, Closure $callback): int | iterable | null
     {
         $bar = $this->output->createProgressBar(
             match (true) {
@@ -385,6 +467,36 @@ trait InteractsWithIO
         $this->output->progressFinish();
     }
 
+    public function form(): FormBuilder
+    {
+        return form();
+    }
+
+    public function pause(string $message = 'Press enter to continue...'): void
+    {
+        pause($message);
+    }
+
+    public function clear(): void
+    {
+        clear();
+    }
+
+    public function clearScreen(): void
+    {
+        terminal()->clear();
+    }
+
+    public function terminalHeight(): int
+    {
+        return (new Terminal())->getHeight();
+    }
+
+    public function terminalWidth(): int
+    {
+        return (new Terminal())->getWidth();
+    }
+
     /**
      * @param string[] $elements
      */
@@ -410,7 +522,7 @@ trait InteractsWithIO
     }
 
     /**
-     * Write a string as information output.
+     * Write a string as an information output.
      *
      * @param string[]|string $message
      */
@@ -420,7 +532,7 @@ trait InteractsWithIO
     }
 
     /**
-     * Write a string as information output.
+     * Write a string as an information output.
      *
      * @param string[]|string $message
      */
@@ -431,13 +543,13 @@ trait InteractsWithIO
 
     public function line(string $message, ?string $style = null, int | string | null $verbosity = null): void
     {
-        $styled = $style ? "<$style>$message</$style>" : $message;
+        $styled = $style !== null && $style !== '' && $style !== '0' ? sprintf('<%s>%s</%s>', $style, $message, $style) : $message;
 
         $this->output->writeln($styled, $this->parseVerbosity($verbosity));
     }
 
     /**
-     * Write a string as error output.
+     * Write a string as an error output.
      *
      * @param string[]|string $message
      */
@@ -447,7 +559,7 @@ trait InteractsWithIO
     }
 
     /**
-     * Write a string as warning output.
+     * Write a string as a warning output.
      *
      * @param string[]|string $message
      */
@@ -457,7 +569,7 @@ trait InteractsWithIO
     }
 
     /**
-     * Write a string as success output.
+     * Write a string as a success output.
      *
      * @param string[]|string $message
      */

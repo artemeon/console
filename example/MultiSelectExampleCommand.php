@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Artemeon\Console\Commands;
+namespace Artemeon\Console\Example;
 
 use Artemeon\Console\Command;
 
-class SelectExampleCommand extends Command
+class MultiSelectExampleCommand extends Command
 {
-    protected string $signature = 'select';
+    protected string $signature = 'multiselect';
 
     public function __invoke(): int
     {
-        $this->select(label: 'Please choose a car brand', options: [
+        $this->multiselect(label: 'Please choose your favorite car brands', options: [
             'audi' => 'Audi',
             'bmw' => 'BMW',
             'ferrari' => 'Ferrari',

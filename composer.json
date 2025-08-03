@@ -4,13 +4,19 @@
     "type": "library",
     "license": "MIT",
     "scripts": {
-        "phpstan": "php ./vendor/bin/phpstan analyse --memory-limit=4G",
+        "phpstan": "php ./vendor/bin/phpstan analyse --memory-limit=-1",
         "pint": "./vendor/bin/pint --test -v",
-        "pint:fix": "./vendor/bin/pint"
+        "pint:fix": "./vendor/bin/pint",
+        "refactor": "./vendor/bin/rector process"
     },
     "autoload": {
         "psr-4": {
             "Artemeon\\Console\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Artemeon\\Console\\Example\\": "example/"
         }
     },
     "authors": [
@@ -22,7 +28,7 @@
     "require": {
         "php": "^8.2",
         "illuminate/support": "^11.40.0|^12.16.0",
-        "laravel/prompts": "^0.3.3",
+        "laravel/prompts": "^0.3.6",
         "nunomaduro/termwind": "^1.5|^2.0",
         "symfony/console": "^5.0|^6.0|^7.0"
     },

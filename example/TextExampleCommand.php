@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Artemeon\Console\Commands;
+namespace Artemeon\Console\Example;
 
 use Artemeon\Console\Command;
 

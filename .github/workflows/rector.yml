@@ -1,4 +1,4 @@
-name: Pint
+name: Rector
 
 on:
     pull_request:
@@ -8,7 +8,7 @@ on:
 
 jobs:
     pint:
-        name: Pint (PHP-CS-Fixer)
+        name: Rector
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -22,5 +22,5 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Composer install
               run: composer install --no-interaction --no-ansi --no-progress
-            - name: Run Pint
-              run: composer run pint
+            - name: Run Rector
+              run: ./vendor/bin/rector process --dry-run
