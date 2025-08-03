@@ -14,6 +14,7 @@ class Command extends SymfonyCommand
     use Concerns\HasParameters;
     use Concerns\InteractsWithIO;
     use Concerns\ConfiguresPrompts;
+    use Concerns\PromptsForMissingInput;
 
     /**
      * The name and signature of the console command.
