@@ -54,7 +54,7 @@ class Parser
         $options = [];
 
         foreach ($tokens as $token) {
-            if (preg_match('/-{2,}(.*)/', $token, $matches)) {
+            if (preg_match('/^-{2,}(.*)/', $token, $matches)) {
                 $options[] = static::parseOption($matches[1]);
             } else {
                 $arguments[] = static::parseArgument($token);
@@ -79,13 +79,13 @@ class Parser
                 $description,
             ),
             str_ends_with($token, '?') => new InputArgument(trim($token, '?'), InputArgument::OPTIONAL, $description),
-            preg_match('/(.+)\=\*(.+)/', $token, $matches) => new InputArgument(
+            preg_match('/(.+)\=\*(.+)/', $token, $matches) === 1 => new InputArgument(
                 $matches[1],
                 InputArgument::IS_ARRAY,
                 $description,
                 preg_split('/,\s?/', $matches[2]),
             ),
-            preg_match('/(.+)\=(.+)/', $token, $matches) => new InputArgument(
+            preg_match('/(.+)\=(.+)/', $token, $matches) === 1 => new InputArgument(
                 $matches[1],
                 InputArgument::OPTIONAL,
                 $description,
