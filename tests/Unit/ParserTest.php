@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Artemeon\Console\Parser;
 
 covers(Parser::class);
