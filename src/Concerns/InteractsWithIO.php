@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Artemeon\Console\Concerns;
 
+use Artemeon\Console\Clipboard;
 use Artemeon\Console\Styles\ArtemeonStyle;
 use Closure;
 use Illuminate\Support\Collection;
 use Laravel\Prompts\FormBuilder;
+use RuntimeException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableStyle;
@@ -581,6 +583,21 @@ trait InteractsWithIO
     public function newLine(int $count = 1): static
     {
         $this->output->newLine($count);
+
+        return $this;
+    }
+
+    public function toClipboard(string $content, ?string $successMessage = null): static
+    {
+        try {
+            $success = Clipboard::copy($content);
+        } catch (RuntimeException) {
+            return $this;
+        }
+
+        if ($success) {
+            $this->success($successMessage ?? $content . ' copied to clipboard.');
+        }
 
         return $this;
     }
