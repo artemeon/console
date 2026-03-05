@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Artemeon\Console;
 
 use Artemeon\Console\Styles\ArtemeonStyle;
+use Closure;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,6 +16,8 @@ class Command extends SymfonyCommand
     use Concerns\InteractsWithIO;
     use Concerns\ConfiguresPrompts;
     use Concerns\PromptsForMissingInput;
+
+    public static ?Closure $postCallClosure = null;
 
     /**
      * The name and signature of the console command.
@@ -87,7 +90,13 @@ class Command extends SymfonyCommand
             return self::FAILURE;
         }
 
-        return $callable();
+        $exit = $callable();
+
+        if (self::$postCallClosure instanceof Closure) {
+            call_user_func(self::$postCallClosure, $exit);
+        }
+
+        return $exit;
     }
 
     protected function configureUsingFluentDefinition(): void
@@ -110,5 +119,13 @@ class Command extends SymfonyCommand
         parent::setHidden($this->hidden = $hidden);
 
         return $this;
+    }
+
+    /**
+     * @param Closure(int): void $closure
+     */
+    public static function setupPostCallClosure(Closure $closure): void
+    {
+        self::$postCallClosure = $closure;
     }
 }
