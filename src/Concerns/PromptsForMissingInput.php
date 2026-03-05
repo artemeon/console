@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Artemeon\Console\Concerns;
 
-use Closure;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,12 +36,6 @@ trait PromptsForMissingInput
                 $description = rtrim(trim($argument->getDescription()), '!:,.?');
                 $label = $this->promptForMissingArgumentsUsing()[$argument->getName()] ??
                     'What is ' . lcfirst($description === '' ? 'the ' . $argument->getName() : $description) . '?';
-
-                if ($label instanceof Closure) {
-                    $input->setArgument($argument->getName(), $argument->isArray() ? Arr::wrap($label()) : $label());
-
-                    return;
-                }
 
                 if (is_array($label)) {
                     [$label, $placeholder] = $label;

@@ -109,7 +109,7 @@ trait ConfiguresPrompts
         while (true) {
             $result = $prompt();
 
-            if ($required && ($result === '' || $result === [] || $result === false)) {
+            if ($required && in_array($result, ['', [], false], true)) {
                 $this->output->error(is_string($required) ? $required : 'Required.');
 
                 continue;
