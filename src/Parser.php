@@ -38,7 +38,7 @@ class Parser
             throw new InvalidArgumentException('Unable to determine command name from signature.');
         }
 
-        return $matches[0];
+        return $matches[0] ?? '';
     }
 
     /**

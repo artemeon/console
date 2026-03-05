@@ -15,7 +15,6 @@ return RectorConfig::configure()
         privatization: true,
         instanceOf: true,
         earlyReturn: true,
-        strictBooleans: true,
     )
     ->withPaths([
         __DIR__ . '/src',
