@@ -545,7 +545,7 @@ trait InteractsWithIO
 
     public function line(string $message, ?string $style = null, int | string | null $verbosity = null): void
     {
-        $styled = in_array($style, [null, '', '0'], true) ? sprintf('<%s>%s</%s>', $style, $message, $style) : $message;
+        $styled = in_array($style, [null, '', '0'], true) ? $message : sprintf('<%s>%s</%s>', $style, $message, $style);
 
         $this->output->writeln($styled, $this->parseVerbosity($verbosity));
     }
