@@ -9,6 +9,8 @@ use Artemeon\Console\Styles\ArtemeonStyle;
 use Closure;
 use Illuminate\Support\Collection;
 use Laravel\Prompts\FormBuilder;
+use Laravel\Prompts\Stream;
+use Laravel\Prompts\Support\Logger;
 use RuntimeException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -18,18 +20,26 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Terminal;
 
+use function Laravel\Prompts\autocomplete;
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\datatable;
 use function Laravel\Prompts\form;
+use function Laravel\Prompts\grid;
 use function Laravel\Prompts\multiselect;
+use function Laravel\Prompts\notify;
+use function Laravel\Prompts\number;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\pause;
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\spin;
+use function Laravel\Prompts\stream;
 use function Laravel\Prompts\suggest;
+use function Laravel\Prompts\task;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\textarea;
+use function Laravel\Prompts\title;
 use function Termwind\terminal;
 
 trait InteractsWithIO
@@ -411,6 +421,149 @@ trait InteractsWithIO
             hint: $hint,
             required: $required,
             transform: $transform,
+        );
+    }
+
+    /**
+     * Prompt the user for number input.
+     */
+    public function number(
+        string $label,
+        string $placeholder = '',
+        string $default = '',
+        bool | string $required = false,
+        mixed $validate = null,
+        string $hint = '',
+        ?int $min = null,
+        ?int $max = null,
+        ?int $step = null,
+    ): int | string {
+        return number(
+            label: $label,
+            placeholder: $placeholder,
+            default: $default,
+            required: $required,
+            validate: $validate,
+            hint: $hint,
+            min: $min,
+            max: $max,
+            step: $step,
+        );
+    }
+
+    /**
+     * Display a grid.
+     *
+     * @param array<int, string>|Collection<int, string> $items
+     */
+    public function grid(array | Collection $items = [], ?int $maxWidth = null): void
+    {
+        grid($items, $maxWidth);
+    }
+
+    /**
+     * Update the title of the terminal.
+     */
+    public function terminalTitle(string $title): void
+    {
+        title($title);
+    }
+
+    /**
+     * Display a stream of text.
+     */
+    public function stream(): Stream
+    {
+        return stream();
+    }
+
+    /**
+     * Display a task with a spinner and live output.
+     *
+     * @template TReturn of mixed
+     *
+     * @param Closure(Logger): TReturn $callback
+     *
+     * @return TReturn
+     */
+    public function task(string $label, Closure $callback, ?int $limit = null): mixed
+    {
+        return task($label, $callback, $limit);
+    }
+
+    /**
+     * Prompt the user for text input with auto-completion.
+     *
+     * @param array<string>|Collection<int, string>|Closure(string): (array<string>|Collection<int, string>) $options
+     */
+    public function autocomplete(
+        string $label,
+        array | Closure | Collection $options = [],
+        string $placeholder = '',
+        string $default = '',
+        bool | string $required = false,
+        mixed $validate = null,
+        string $hint = '',
+        ?Closure $transform = null,
+    ): string {
+        return autocomplete(
+            label: $label,
+            options: $options,
+            placeholder: $placeholder,
+            default: $default,
+            required: $required,
+            validate: $validate,
+            hint: $hint,
+            transform: $transform,
+        );
+    }
+
+    /**
+     * Send a notification to the user (macOS and Linux only).
+     *
+     * The icon option is Linux only. The subtitle and sound options are macOS only.
+     *
+     * @param string $subtitle macOS only
+     * @param string $sound macOS only
+     * @param string $icon Linux only
+     */
+    public function notify(
+        string $title,
+        string $body = '',
+        string $subtitle = '',
+        string $sound = '',
+        string $icon = '',
+    ): void {
+        notify($title, $body, $subtitle, $sound, $icon);
+    }
+
+    /**
+     * Display an interactive data table.
+     *
+     * @param array<int, string|array<int, string>>|Collection<int, string|array<int, string>> $headers
+     * @param array<int|string, array<int, string>>|Collection<int|string, array<int, string>>|null $rows
+     */
+    public function dataTable(
+        array | Collection $headers = [],
+        array | Collection | null $rows = null,
+        int $scroll = 10,
+        string $label = '',
+        string $hint = '',
+        bool | string $required = false,
+        mixed $validate = null,
+        ?Closure $transform = null,
+        ?Closure $filter = null,
+    ): mixed {
+        return datatable(
+            $headers,
+            $rows,
+            $scroll,
+            $label,
+            $hint,
+            $required,
+            $validate,
+            $transform,
+            $filter,
         );
     }
 

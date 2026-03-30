@@ -31,8 +31,8 @@
     ],
     "require": {
         "php": "^8.2",
-        "illuminate/support": "^11.40.0|^12.16.0",
-        "laravel/prompts": "^0.3.6",
+        "illuminate/support": "^11.40.0|^12.16.0|^13.2.0",
+        "laravel/prompts": "^0.3.16",
         "nunomaduro/termwind": "^1.5|^2.0",
         "symfony/console": "^5.0|^6.0|^7.0"
     },
