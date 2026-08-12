@@ -37,7 +37,7 @@
         "symfony/console": "^5.0|^6.0|^7.0"
     },
     "require-dev": {
-        "laravel/pint": "^1.27.1",
+        "laravel/pint": "^1.30.5",
         "phpstan/phpstan": "^2.1.40",
         "rector/rector": "^2.3.8",
         "pestphp/pest": "^3.8.5",
