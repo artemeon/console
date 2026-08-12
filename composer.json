@@ -30,7 +30,7 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "illuminate/support": "^11.40.0|^12.16.0|^13.2.0",
         "laravel/prompts": "^0.3.16",
         "nunomaduro/termwind": "^1.5|^2.0",
@@ -40,8 +40,8 @@
         "laravel/pint": "^1.30.5",
         "phpstan/phpstan": "^2.2.8",
         "rector/rector": "^2.6.2",
-        "pestphp/pest": "^3.8.5",
-        "pestphp/pest-plugin-type-coverage": "^3.6.1"
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0"
     },
     "config": {
         "allow-plugins": {
