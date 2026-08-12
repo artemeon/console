@@ -8,6 +8,7 @@ use Artemeon\Console\Clipboard;
 use Artemeon\Console\Styles\ArtemeonStyle;
 use Closure;
 use Illuminate\Support\Collection;
+use Laravel\Prompts\Elements\ElementContract;
 use Laravel\Prompts\FormBuilder;
 use Laravel\Prompts\Stream;
 use Laravel\Prompts\Support\Logger;
@@ -21,6 +22,7 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Terminal;
 
 use function Laravel\Prompts\autocomplete;
+use function Laravel\Prompts\callout;
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\datatable;
@@ -486,9 +488,9 @@ trait InteractsWithIO
      *
      * @return TReturn
      */
-    public function task(string $label, Closure $callback, ?int $limit = null): mixed
+    public function task(string $label, Closure $callback, ?int $limit = null, bool $keepSummary = false, ?string $subLabel = null): mixed
     {
-        return task($label, $callback, $limit);
+        return task($label, $callback, $limit, $keepSummary, $subLabel);
     }
 
     /**
@@ -565,6 +567,16 @@ trait InteractsWithIO
             $transform,
             $filter,
         );
+    }
+
+    /**
+     * Display a callout.
+     *
+     * @param string|list<string|ElementContract> $content
+     */
+    public function callout(string $label, array | string $content = [], ?string $type = null, string $info = ''): void
+    {
+        callout($label, $content, $type, $info);
     }
 
     /**
