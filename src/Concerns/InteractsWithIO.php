@@ -767,6 +767,9 @@ trait InteractsWithIO
         return $this;
     }
 
+    /**
+     * @return int<0, 511>
+     */
     protected function parseVerbosity(int | string | null $level = null): int
     {
         if (isset($this->verbosityMap[$level])) {
@@ -775,7 +778,7 @@ trait InteractsWithIO
             $level = $this->verbosity;
         }
 
-        return $level;
+        return max(0, min(511, $level));
     }
 
     protected function isWindows(): bool
