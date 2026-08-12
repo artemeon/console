@@ -40,8 +40,8 @@
         "laravel/pint": "^1.30.5",
         "phpstan/phpstan": "^2.2.8",
         "rector/rector": "^2.6.2",
-        "pestphp/pest": "^4.0",
-        "pestphp/pest-plugin-type-coverage": "^4.0"
+        "pestphp/pest": "^5.0",
+        "pestphp/pest-plugin-type-coverage": "^5.0"
     },
     "config": {
         "allow-plugins": {
