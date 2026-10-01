@@ -94,3 +94,14 @@ it('can parse options with shortcut', function (): void {
         ->and($options[1]->getDefault())->toBeFalse()
         ->and($options[1]->getShortcut())->toBe('w');
 });
+
+it('can parse array options with required values and description', function (): void {
+    [, , $options] = Parser::parse('foo:bar {--id==* : The IDs}');
+
+    expect($options)
+        ->toHaveCount(1)
+        ->and($options[0]->getName())->toBe('id')
+        ->and($options[0]->isValueRequired())->toBeTrue()
+        ->and($options[0]->isArray())->toBeTrue()
+        ->and($options[0]->getDescription())->toBe('The IDs');
+});

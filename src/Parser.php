@@ -127,6 +127,7 @@ class Parser
                 trim($name, '=*'),
                 $shortcut,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                $description,
             ),
             str_ends_with($name, '=*') => new InputOption(
                 trim($name, '=*'),
